@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Accesibilidad</title>
+    <style>
+        :root {
+            --primary-color: #11998e;
+            --secondary-color: #38ef7d;
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --font-size-normal: 16px;
+            --font-size-pequeno: 14px;
+            --font-size-grande: 18px;
+            --font-size-muy-grande: 20px;
+        }
+
+        /* Modo Alto Contraste */
+        body.alto-contraste {
+            --primary-color: #ffff00;
+            --secondary-color: #00ffff;
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --card-bg: #000000;
+            --border-color: #ffff00;
+        }
+
+        /* Tamaños de Fuente */
+        body.tamanio-pequeno {
+            font-size: var(--font-size-pequeno);
+        }
+
+        body.tamanio-normal {
+            font-size: var(--font-size-normal);
+        }
+
+        body.tamanio-grande {
+            font-size: var(--font-size-grande);
+        }
+
+        body.tamanio-muy-grande {
+            font-size: var(--font-size-muy-grande);
+        }
+
+        /* Estilos Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Panel de Control */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .control-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--border-color);
+        }
+
+        .control-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Select y Input */
+        .select-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        /* Botones */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        /* Listas */
+        .list-group {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .list-group li {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-group li:last-child {
+            border-bottom: none;
+        }
+
+        /* Estado */
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-inactive {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Grid de Módulos */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .module-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--border-color);
+        }
+
+        .module-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .module-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Tabla */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .table th, .table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Mensajes */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Indicador */
+        .accessibility-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .control-panel,
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-indicator {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body id="main-body" 
+      class="{% if config.alto_contraste %}alto-contraste{% endif %} tamanio-{{ config.tamanio_fuente }}">
+    
+    <div class="container">
+        <!-- Mensajes -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-universal-access"></i> Sistema de Accesibilidad</h1>
+            <p>Configuración y gestión de opciones de accesibilidad digital</p>
+        </div>
+
+        <!-- Panel de Control -->
+        <div class="control-panel">
+            <!-- Configuración de Accesibilidad Digital -->
+            <div class="control-card">
+                <h3><i class="fas fa-desktop"></i> Accesibilidad Digital</h3>
+                
+                <div class="toggle-container">
+                    <span>Alto Contraste:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="altoContrasteToggle" {% if config.alto_contraste %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span id="contrasteStatus" class="status {% if config.alto_contraste %}status-active{% else %}status-inactive{% endif %}">
+                        {% if config.alto_contraste %}ACTIVO{% else %}INACTIVO{% endif %}
+                    </span>
+                </div>
+
+                <div class="toggle-container">
+                    <span>Lectura Asistida:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="lecturaAsistidaToggle" {% if config.lectura_asistida %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span id="lecturaStatus" class="status {% if config.lectura_asistida %}status-active{% else %}status-inactive{% endif %}">
+                        {% if config.lectura_asistida %}ACTIVO{% else %}INACTIVO{% endif %}
+                    </span>
+                </div>
+
+                <label for="tamanioFuenteSelect">Tamaño de Fuente:</label>
+                <select class="select-control" id="tamanioFuenteSelect">
+                    <option value="pequeno" {% if config.tamanio_fuente == 'pequeno' %}selected{% endif %}>Pequeño</option>
+                    <option value="normal" {% if config.tamanio_fuente == 'normal' %}selected{% endif %}>Normal</option>
+                    <option value="grande" {% if config.tamanio_fuente == 'grande' %}selected{% endif %}>Grande</option>
+                    <option value="muy-grande" {% if config.tamanio_fuente == 'muy-grande' %}selected{% endif %}>Muy Grande</option>
+                </select>
+
+                <label for="tokenAccesibilidadInput">Token de Accesibilidad:</label>
+                <div class="input-group">
+                    <input type="text" class="input-control" id="tokenAccesibilidadInput" value="{{ config.token_accesibilidad }}">
+                    <button class="btn" onclick="guardarToken()" style="margin-top: 10px;">
+                        <i class="fas fa-save"></i> Guardar Token
+                    </button>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="guardarConfiguracion()">
+                        <i class="fas fa-save"></i> Guardar Configuración
+                    </button>
+                </div>
+            </div>
+
+            <!-- Control de Texto -->
+            <div class="control-card">
+                <h3><i class="fas fa-file-alt"></i> Control de Texto</h3>
+                
+                <h4>Terminologías Específicas</h4>
+                <ul class="list-group">
+                    {% for term in terminologias %}
+                    <li>
+                        <strong>{{ term.termino }}</strong>
+                        <span class="badge">{{ term.categoria }}</span>
+                    </li>
+                    {% empty %}
+                    <li>No hay terminologías registradas</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'gestionar_terminologias' %}" class="btn btn-secondary" style="margin-top: 10px;">
+                    <i class="fas fa-cogs"></i> Gestionar Terminologías
+                </a>
+
+                <h4 style="margin-top: 20px;">Tokens de Inmunización</h4>
+                <ul class="list-group">
+                    {% for token in tokens %}
+                    <li>
+                        <strong>{{ token.nombre }}</strong>
+                        <span class="status {% if token.esta_expirado %}status-inactive{% else %}status-active{% endif %}">
+                            {{ token.tipo }}
+                        </span>
+                    </li>
+                    {% empty %}
+                    <li>No hay tokens activos</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'gestionar_tokens' %}" class="btn btn-secondary" style="margin-top: 10px;">
+                    <i class="fas fa-key"></i> Gestionar Tokens
+                </a>
+            </div>
+
+            <!-- Gestión de Recursos -->
+            <div class="control-card">
+                <h3><i class="fas fa-boxes"></i> Gestión de Recursos</h3>
+                
+                <h4>Recursos Disponibles</h4>
+                <ul class="list-group">
+                    {% for recurso in recursos %}
+                    <li>
+                        <strong>{{ recurso.nombre }}</strong>
+                        <span class="badge">{{ recurso.tipo }}</span>
+                    </li>
+                    {% empty %}
+                    <li>No hay recursos disponibles</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="module-actions">
+                    <a href="{% url 'filtrar_recursos' %}" class="btn">
+                        <i class="fas fa-filter"></i> Filtrar Recursos
+                    </a>
+                    <a href="{% url 'agregar_recurso' %}" class="btn btn-secondary">
+                        <i class="fas fa-plus"></i> Agregar Recurso
+                    </a>
+                </div>
+
+                <h4 style="margin-top: 20px;">Contenidos Replicados</h4>
+                <ul class="list-group">
+                    {% for contenido in contenidos %}
+                    <li>
+                        <strong>{{ contenido.titulo }}</strong>
+                        <span class="badge">{{ contenido.tipo }}</span>
+                    </li>
+                    {% empty %}
+                    <li>No hay contenidos replicados</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Módulos Funcionales -->
+        <div class="modules-grid">
+            <!-- Módulo 1: Configuración Dinámica -->
+            <div class="module-card">
+                <h3><i class="fas fa-sliders-h"></i> Configuración Dinámica</h3>
+                <p>Ajusta en tiempo real las configuraciones de accesibilidad:</p>
+                <div class="module-actions">
+                    <button class="btn" onclick="aplicarAltoContraste()">
+                        <i class="fas fa-adjust"></i> Alternar Contraste
+                    </button>
+                    <button class="btn" onclick="aumentarFuente()">
+                        <i class="fas fa-search-plus"></i> Aumentar Fuente
+                    </button>
+                    <button class="btn" onclick="disminuirFuente()">
+                        <i class="fas fa-search-minus"></i> Disminuir Fuente
+                    </button>
+                </div>
+            </div>
+
+            <!-- Módulo 2: Lectura Asistida -->
+            <div class="module-card">
+                <h3><i class="fas fa-assistive-listening-systems"></i> Lectura Asistida</h3>
+                <p>Activa la lectura de contenido para asistencia auditiva:</p>
+                <div class="module-actions">
+                    <button class="btn" onclick="leerPagina()">
+                        <i class="fas fa-play"></i> Leer Página
+                    </button>
+                    <button class="btn" onclick="detenerLectura()">
+                        <i class="fas fa-stop"></i> Detener
+                    </button>
+                    <button class="btn" onclick="probarLectura()">
+                        <i class="fas fa-volume-up"></i> Probar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Módulo 3: Gestión de Transiciones -->
+            <div class="module-card">
+                <h3><i class="fas fa-exchange-alt"></i> Control de Transiciones</h3>
+                <p>Gestiona las transiciones de texto y animaciones:</p>
+                <div class="module-actions">
+                    <a href="{% url 'gestionar_transiciones' %}" class="btn">
+                        <i class="fas fa-cogs"></i> Configurar Transiciones
+                    </a>
+                    <button class="btn" onclick="probarTransiciones()">
+                        <i class="fas fa-play-circle"></i> Probar Efectos
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Transiciones Activas -->
+        <div class="control-card">
+            <h3><i class="fas fa-running"></i> Transiciones de Texto Activas</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Duración</th>
+                        <th>Efecto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transicion in transiciones_activas %}
+                    <tr>
+                        <td>{{ transicion.nombre }}</td>
+                        <td>{{ transicion.duracion }}ms</td>
+                        <td>{{ transicion.get_efecto_display }}</td>
+                        <td>
+                            <span class="status status-active">ACTIVA</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center;">No hay transiciones activas</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Indicador de Accesibilidad -->
+    <div class="accessibility-indicator" id="accessIndicator">
+        <i class="fas fa-universal-access"></i>
+        <span id="indicatorText">
+            Modo: {% if config.alto_contraste %}Alto Contraste{% else %}Normal{% endif %} | 
+            Fuente: {{ config.get_tamanio_fuente_display }}
+        </span>
+    </div>
+
+    <script>
+        // Variables globales
+        let config = {
+            alto_contraste: {{ config.alto_contraste|yesno:"true,false" }},
+            tamanio_fuente: "{{ config.tamanio_fuente }}",
+            lectura_asistida: {{ config.lectura_asistida|yesno:"true,false" }},
+            token_accesibilidad: "{{ config.token_accesibilidad }}"
+        };
+
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+
+        // Actualizar indicador
+        function actualizarIndicador() {
+            const modo = config.alto_contraste ? 'Alto Contraste' : 'Normal';
+            const fuente = config.tamanio_fuente;
+            const fuenteText = {
+                'pequeno': 'Pequeña',
+                'normal': 'Normal',
+                'grande': 'Grande',
+                'muy-grande': 'Muy Grande'
+            }[fuente] || 'Normal';
+            
+            document.getElementById('indicatorText').textContent = 
+                `Modo: ${modo} | Fuente: ${fuenteText} | Lectura: ${config.lectura_asistida ? 'ON' : 'OFF'}`;
+        }
+
+        // Guardar configuración
+        async function guardarConfiguracion() {
+            const data = {
+                alto_contraste: config.alto_contraste,
+                tamanio_fuente: config.tamanio_fuente,
+                lectura_asistida: config.lectura_asistida,
+                token_accesibilidad: config.token_accesibilidad
+            };
+
+            try {
+                const response = await fetch('/accesibilidad/actualizar-configuracion/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Configuración guardada exitosamente');
+                    actualizarIndicador();
+                } else {
+                    alert('Error al guardar configuración: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        }
+
+        // Guardar token específico
+        async function guardarToken() {
+            const tokenInput = document.getElementById('tokenAccesibilidadInput');
+            config.token_accesibilidad = tokenInput.value;
+            await guardarConfiguracion();
+        }
+
+        // Alternar alto contraste
+        function aplicarAltoContraste() {
+            config.alto_contraste = !config.alto_contraste;
+            document.getElementById('main-body').classList.toggle('alto-contraste', config.alto_contraste);
+            document.getElementById('altoContrasteToggle').checked = config.alto_contraste;
+            actualizarEstadoContraste();
+            guardarConfiguracion();
+        }
+
+        // Aumentar tamaño de fuente
+        function aumentarFuente() {
+            const tamanios = ['pequeno', 'normal', 'grande', 'muy-grande'];
+            const currentIndex = tamanios.indexOf(config.tamanio_fuente);
+            if (currentIndex < tamanios.length - 1) {
+                config.tamanio_fuente = tamanios[currentIndex + 1];
+                aplicarTamanioFuente();
+                guardarConfiguracion();
+            }
+        }
+
+        // Disminuir tamaño de fuente
+        function disminuirFuente() {
+            const tamanios = ['pequeno', 'normal', 'grande', 'muy-grande'];
+            const currentIndex = tamanios.indexOf(config.tamanio_fuente);
+            if (currentIndex > 0) {
+                config.tamanio_fuente = tamanios[currentIndex - 1];
+                aplicarTamanioFuente();
+                guardarConfiguracion();
+            }
+        }
+
+        // Aplicar tamaño de fuente
+        function aplicarTamanioFuente() {
+            const body = document.getElementById('main-body');
+            // Remover clases anteriores
+            body.classList.remove('tamanio-pequeno', 'tamanio-normal', 'tamanio-grande', 'tamanio-muy-grande');
+            // Agregar nueva clase
+            body.classList.add(`tamanio-${config.tamanio_fuente}`);
+            // Actualizar select
+            document.getElementById('tamanioFuenteSelect').value = config.tamanio_fuente;
+            actualizarIndicador();
+        }
+
+        // Leer página
+        async function leerPagina() {
+            if (!config.lectura_asistida) {
+                alert('Por favor active primero la lectura asistida');
+                return;
+            }
+
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+
+            // Obtener texto de la página
+            const titulo = document.querySelector('.header h1').textContent;
+            const descripcion = document.querySelector('.header p').textContent;
+            
+            const texto = `${titulo}. ${descripcion}. Sistema de accesibilidad activado.`;
+
+            // Enviar al servidor para registro
+            try {
+                await fetch('/accesibilidad/leer-contenido/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ texto: texto })
+                });
+            } catch (error) {
+                console.error('Error al registrar lectura:', error);
+            }
+
+            // Leer con Web Speech API
+            currentUtterance = new SpeechSynthesisUtterance(texto);
+            currentUtterance.lang = 'es-ES';
+            currentUtterance.rate = 1.0;
+            currentUtterance.pitch = 1.0;
+            currentUtterance.volume = 1.0;
+
+            speechSynthesis.speak(currentUtterance);
+        }
+
+        // Detener lectura
+        function detenerLectura() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+        }
+
+        // Probar lectura
+        function probarLectura() {
+            if (!config.lectura_asistida) {
+                alert('Por favor active primero la lectura asistida');
+                return;
+            }
+
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+
+            const prueba = new SpeechSynthesisUtterance("Prueba de lectura asistida. El sistema de accesibilidad funciona correctamente.");
+            prueba.lang = 'es-ES';
+            speechSynthesis.speak(prueba);
+        }
+
+        // Probar transiciones
+        function probarTransiciones() {
+            const elementos = document.querySelectorAll('.control-card, .module-card');
+            
+            elementos.forEach((elemento, index) => {
+                setTimeout(() => {
+                    elemento.style.transition = 'all 0.5s ease';
+                    elemento.style.transform = 'scale(1.05)';
+                    elemento.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
+                    
+                    setTimeout(() => {
+                        elemento.style.transform = 'scale(1)';
+                        elemento.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
+                    }, 500);
+                }, index * 200);
+            });
+        }
+
+        // Actualizar estado visual de contraste
+        function actualizarEstadoContraste() {
+            const statusElement = document.getElementById('contrasteStatus');
+            statusElement.textContent = config.alto_contraste ? 'ACTIVO' : 'INACTIVO';
+            statusElement.className = `status ${config.alto_contraste ? 'status-active' : 'status-inactive'}`;
+        }
+
+        // Actualizar estado visual de lectura
+        function actualizarEstadoLectura() {
+            const statusElement = document.getElementById('lecturaStatus');
+            statusElement.textContent = config.lectura_asistida ? 'ACTIVO' : 'INACTIVO';
+            statusElement.className = `status ${config.lectura_asistida ? 'status-active' : 'status-inactive'}`;
+        }
+
+        // Helper para obtener cookie CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar event listeners para los controles
+            document.getElementById('altoContrasteToggle').addEventListener('change', function() {
+                config.alto_contraste = this.checked;
+                document.getElementById('main-body').classList.toggle('alto-contraste', this.checked);
+                actualizarEstadoContraste();
+            });
+
+            document.getElementById('lecturaAsistidaToggle').addEventListener('change', function() {
+                config.lectura_asistida = this.checked;
+                actualizarEstadoLectura();
+            });
+
+            document.getElementById('tamanioFuenteSelect').addEventListener('change', function() {
+                config.tamanio_fuente = this.value;
+                aplicarTamanioFuente();
+            });
+
+            // Inicializar indicador
+            actualizarIndicador();
+
+            // Aplicar transiciones iniciales
+            setTimeout(() => {
+                probarTransiciones();
+            }, 1000);
+        });
+
+        // Teclas de acceso rápido
+        document.addEventListener('keydown', function(event) {
+            // Ctrl + Alt + C: Alternar contraste
+            if (event.ctrlKey && event.altKey && event.key === 'c') {
+                aplicarAltoContraste();
+                event.preventDefault();
+            }
+            
+            // Ctrl + Alt + L: Alternar lectura
+            if (event.ctrlKey && event.altKey && event.key === 'l') {
+                config.lectura_asistida = !config.lectura_asistida;
+                document.getElementById('lecturaAsistidaToggle').checked = config.lectura_asistida;
+                actualizarEstadoLectura();
+                event.preventDefault();
+            }
+            
+            // Ctrl + +: Aumentar fuente
+            if (event.ctrlKey && (event.key === '+' || event.key === '=')) {
+                aumentarFuente();
+                event.preventDefault();
+            }
+            
+            // Ctrl + -: Disminuir fuente
+            if (event.ctrlKey && event.key === '-') {
+                dismininuirFuente();
+                event.preventDefault();
+            }
+        });
+
+        console.log('Sistema de Accesibilidad cargado correctamente');
+        console.log('Atajos de teclado:');
+        console.log('Ctrl + Alt + C: Alternar contraste');
+        console.log('Ctrl + Alt + L: Alternar lectura asistida');
+        console.log('Ctrl + +: Aumentar tamaño de fuente');
+        console.log('Ctrl + -: Disminuir tamaño de fuente');
+    </script>
+</body>
+</html>

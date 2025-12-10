@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles del Equipo - GESINFRA-WEB{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Detalles del Equipo</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Número de Inventario:</strong></p>
+                        <p>{{ equipo.numero_inventario }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Descripción:</strong></p>
+                        <p>{{ equipo.descripcion }}</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Precio de Adquisición:</strong></p>
+                        <p>${{ equipo.precio_adquisicion|floatformat:2 }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estado:</strong></p>
+                        <p>
+                            {% if equipo.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Responsable del Registro:</strong></p>
+                        <p>{{ equipo.responsable.username }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Fecha de Registro:</strong></p>
+                        <p>{{ equipo.fecha_registro|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'listar_equipos' %}" class="btn btn-primary">Volver al Inventario</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

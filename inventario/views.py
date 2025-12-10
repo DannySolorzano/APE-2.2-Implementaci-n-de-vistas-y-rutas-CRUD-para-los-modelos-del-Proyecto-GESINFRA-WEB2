@@ -1,30 +1,60 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.urls import reverse_lazy
-from .models import Usuario, TipoEquipo, EstadoEquipo, Ubicacion, Responsable, Proveedor, Equipo
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import Equipo
+from .forms import EquipoForm
 
-# Vistas para Equipo (modelo principal)
-class EquipoListView(ListView):
-    model = Equipo
-    template_name = 'inventario/equipo_list.html'
+def home(request):
+    """Página principal del sistema"""
+    return render(request, 'inventario/home.html')
 
-class EquipoCreateView(CreateView):
-    model = Equipo
-    fields = '__all__'
-    template_name = 'inventario/equipo_form.html'
-    success_url = reverse_lazy('equipo_list')
+@login_required
+def listar_equipos(request):
+    """Vista para listar todos los equipos (READ)"""
+    equipos = Equipo.objects.all().order_by('-fecha_registro')
+    
+    # Calcular el valor total de los equipos
+    valor_total = 0
+    for equipo in equipos:
+        valor_total += equipo.precio_adquisicion
+    
+    context = {
+        'equipos': equipos,
+        'total_equipos': equipos.count(),
+        'valor_total': valor_total
+    }
+    
+    return render(request, 'inventario/listar_equipos.html', context)
 
-class EquipoUpdateView(UpdateView):
-    model = Equipo
-    fields = '__all__'
-    template_name = 'inventario/equipo_form.html'
-    success_url = reverse_lazy('equipo_list')
+@login_required
+def crear_equipo(request):
+    """Vista para crear un nuevo equipo (CREATE)"""
+    if request.method == 'POST':
+        form = EquipoForm(request.POST)
+        if form.is_valid():
+            equipo = form.save(commit=False)
+            equipo.responsable = request.user  # Asignar usuario actual
+            equipo.save()
+            return redirect('listar_equipos')
+    else:
+        form = EquipoForm()
+    
+    context = {
+        'form': form,
+        'titulo': 'Registrar Nuevo Equipo'
+    }
+    
+    return render(request, 'inventario/crear_equipo.html', context)
 
-class EquipoDeleteView(DeleteView):
-    model = Equipo
-    template_name = 'inventario/equipo_confirm_delete.html'
-    success_url = reverse_lazy('equipo_list')
+@login_required
+def detalle_equipo(request, equipo_id):
+    """Vista para ver detalles de un equipo"""
+    equipo = get_object_or_404(Equipo, id=equipo_id)
+    
+    context = {
+        'equipo': equipo
+    }
+    
+    return render(request, 'inventario/detalle_equipo.html', context)
 
-class EquipoDetailView(DetailView):
-    model = Equipo
-    template_name = 'inventario/equipo_detail.html'
-
+# Create your views here.

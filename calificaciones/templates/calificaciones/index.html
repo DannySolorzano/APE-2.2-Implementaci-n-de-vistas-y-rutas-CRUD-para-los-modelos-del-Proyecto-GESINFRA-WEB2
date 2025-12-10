@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Calificaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+        }
+        
+        .modules-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .module-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .module-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .module-card h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .module-card h3 i {
+            color: #667eea;
+        }
+        
+        .module-card ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .module-card li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .module-card li:before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 15px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .admin-link {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .admin-link a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .admin-link a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Sistema de Calificaciones</h1>
+            <p>Gestión integral de calificaciones estudiantiles</p>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3><i class="fas fa-users"></i> Estudiantes</h3>
+                <div class="stat-number">{{ total_estudiantes }}</div>
+                <p>Estudiantes registrados</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Docentes</h3>
+                <div class="stat-number">{{ total_docentes }}</div>
+                <p>Docentes activos</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-file-signature"></i> Calificaciones</h3>
+                <div class="stat-number">{{ total_calificaciones }}</div>
+                <p>Registros de calificaciones</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-school"></i> Instituciones</h3>
+                <div class="stat-number">{{ total_instituciones }}</div>
+                <p>Instituciones registradas</p>
+            </div>
+        </div>
+        
+        <div class="modules-container">
+            <div class="module-card">
+                <h3><i class="fas fa-user-graduate"></i> Gestión Estudiantil</h3>
+                <ul>
+                    <li>Registro de estudiantes</li>
+                    <li>Información académica</li>
+                    <li>Historial de calificaciones</li>
+                    <li>Reportes personalizados</li>
+                </ul>
+                <a href="/admin/calificaciones/estudiante/" class="btn">
+                    <i class="fas fa-arrow-right"></i> Gestionar Estudiantes
+                </a>
+            </div>
+            
+            <div class="module-card">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Gestión Docente</h3>
+                <ul>
+                    <li>Registro de docentes</li>
+                    <li>Asignación de cursos</li>
+                    <li>Control salarial</li>
+                    <li>Niveles docentes</li>
+                </ul>
+                <a href="/admin/calificaciones/docente/" class="btn">
+                    <i class="fas fa-arrow-right"></i> Gestionar Docentes
+                </a>
+            </div>
+            
+            <div class="module-card">
+                <h3><i class="fas fa-chart-line"></i> Calificaciones</h3>
+                <ul>
+                    <li>Registro de notas</li>
+                    <li>Cálculo de promedios</li>
+                    <li>Reportes académicos</li>
+                    <li>Análisis estadístico</li>
+                </ul>
+                <a href="/admin/calificaciones/calificacion/" class="btn">
+                    <i class="fas fa-arrow-right"></i> Gestionar Calificaciones
+                </a>
+            </div>
+        </div>
+        
+        <div class="admin-link">
+            <a href="/admin">
+                <i class="fas fa-cog"></i> Acceder al Panel de Administración
+            </a>
+        </div>
+    </div>
+</body>
+</html>

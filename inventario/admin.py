@@ -1,11 +1,11 @@
-# inventario/admin.py
 from django.contrib import admin
-from .models import *
+from .models import Equipo
 
-admin.site.register(Usuario)
-admin.site.register(Equipo)
-admin.site.register(TipoEquipo)
-admin.site.register(EstadoEquipo)
-admin.site.register(Ubicacion)
-admin.site.register(Responsable)
-admin.site.register(Proveedor)
+@admin.register(Equipo)
+class EquipoAdmin(admin.ModelAdmin):
+    list_display = ('numero_inventario', 'descripcion', 'precio_adquisicion', 'responsable', 'fecha_registro', 'activo')
+    list_filter = ('activo', 'responsable', 'fecha_registro')
+    search_fields = ('numero_inventario', 'descripcion')
+    ordering = ('-fecha_registro',)
+
+# Register your models here.

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - GESINFRA-WEB{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Bienvenido a GESINFRA-WEB</h2>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Sistema de Gestión de Infraestructura</h4>
+                <p class="card-text">
+                    Este sistema permite gestionar el inventario de equipos de manera eficiente y segura.
+                </p>
+                <hr>
+                <h5>Características principales:</h5>
+                <ul>
+                    <li>Registro de equipos con número de inventario único</li>
+                    <li>Control de precios de adquisición</li>
+                    <li>Asignación de responsables</li>
+                    <li>Consulta del inventario completo</li>
+                </ul>
+                <div class="text-center mt-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'listar_equipos' %}" class="btn btn-primary btn-lg">Ver Inventario</a>
+                        <a href="{% url 'crear_equipo' %}" class="btn btn-success btn-lg">Registrar Nuevo Equipo</a>
+                    {% else %}
+                        <a href="{% url 'admin:login' %}" class="btn btn-primary btn-lg">Iniciar Sesión para Acceder</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
